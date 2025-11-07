@@ -1,16 +1,96 @@
-# Plugin-WebpackTemplate
+# KV Cache Manager Server Plugin
 
-Template repository for server plugins using TypeScript and Webpack.
+Серверный плагин для SillyTavern, который предоставляет API для управления файлами сохранений KV-кеша llama.cpp.
 
-## How to use
+Этот плагин является серверной частью расширения [KV Cache Manager](https://github.com/fortrest-jr/kv_cache-manager) для SillyTavern.
 
-1. Click "Use this template" on the GitHub page.
-2. Create a new repository and clone it to your local machine.
-3. Open the repository in your code editor and run `npm install`.
-4. Edit the `package.json` file.
-5. Write the source code in the `src` directory.
-6. When you're ready to test - run `npm run build`.
-7. A minimized bundle will appear in `dist`, ready to be plugged into SillyTavern.
+## О расширении
 
-> [!TIP]
-> If you want to test your plugin live, clone the repo into the `/plugins` folder of your SillyTavern installation.
+Основное расширение [KV Cache Manager](https://github.com/fortrest-jr/kv_cache-manager) предоставляет функциональность для управления KV-кешем llama.cpp.
+
+## Функциональность плагина
+
+Серверный плагин предоставляет API эндпоинты для взаимодействия с файловой системой:
+- Получения списка файлов сохранений
+- Удаления указанных файлов
+
+## Установка
+
+1. Убедитесь, что в `config.yaml` SillyTavern установлено `enableServerPlugins: true`
+2. Склонируйте репозиторий в директорию `plugins` вашей установки SillyTavern:
+   ```bash
+   cd plugins
+   git clone <repository-url> kv_cache-manager-plugin
+   ```
+3. Установите зависимости:
+   ```bash
+   cd kv_cache-manager-plugin
+   npm install
+   ```
+4. Соберите плагин:
+   ```bash
+   npm run build
+   ```
+5. Установите переменную окружения `KV_SAVE_DIR` с путем к директории, где хранятся файлы сохранений KV-кеша, используйте её же при запуске llama.cpp
+6. Перезапустите сервер SillyTavern
+
+## Настройка
+
+Плагин требует установки переменной окружения `KV_SAVE_DIR`, которая указывает на директорию с файлами сохранений KV-кеша.
+
+Пример:
+```bash
+export KV_SAVE_DIR="~/kv_caches"
+```
+
+## API Эндпоинты
+
+Все эндпоинты доступны по пути `/api/plugins/kv_cache-manager/`
+
+### GET `/files`
+
+Получить список всех файлов в директории сохранений.
+
+**Ответ:**
+```json
+{
+  "files": [
+    {
+      "name": "chat_1234567890_slot0.bin",
+      "size": 1024,
+      "modified": "2025-01-15T10:30:00.000Z",
+      "isDirectory": false
+    }
+  ]
+}
+```
+
+### DELETE `/files/:filename`
+
+Удалить указанный файл.
+
+**Параметры:**
+- `filename` - имя файла для удаления
+
+**Ответ:**
+```json
+{
+  "success": true,
+  "message": "File chat_1234567890_slot0.bin deleted successfully"
+}
+```
+
+**Ошибки:**
+- `404` - файл не найден
+- `403` - доступ запрещен
+- `500` - внутренняя ошибка сервера
+
+## Требования
+
+- SillyTavern с поддержкой серверных плагинов
+- Node.js
+- Переменная окружения `KV_SAVE_DIR`
+
+## Лицензия
+
+MIT
