@@ -20,7 +20,7 @@
 2. Склонируйте репозиторий в директорию `plugins` вашей установки SillyTavern:
    ```bash
    cd plugins
-   git clone <repository-url> kv_cache-manager-plugin
+   git clone https://github.com/fortrest-jr/kv_cache-manager-plugin
    ```
 3. Установите зависимости:
    ```bash
